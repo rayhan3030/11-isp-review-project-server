@@ -28,3 +28,10 @@ async function run() {
             const services = await cursor.limit(3).toArray();
             res.send(services);
         })
+        // this api for Services page for all services
+        app.get('/services', async (req, res) => {
+            const query = {}
+            const cursor = serviceCollection.find(query);
+            const services = await cursor.toArray();
+            res.send(services);
+        });
