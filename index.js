@@ -48,3 +48,90 @@ async function run() {
             const service = await serviceCollection.findOne(query);
             res.send(service);
         });
+        // this api is for input form data front end to database at the add services route
+        app.post('/services', async (req, res) => {
+            const review = req.body;
+            const result = await serviceCollection.insertOne(review);
+            res.send(result);
+        });
+
+        // review api-----------------------------------------------------------------------------------------------
+        // this api for getting data from db with email address query. 
+
+        app.get('/reviews', async (req, res) => {
+            console.log(req.query.email);
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+
+
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        });
+
+
+        // i will use this api for showing all the reviews in Service/:id route
+        app.get('/reviews', async (req, res) => {
+            console.log(req.query);
+            const query = {};
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        });
+
+
+        //-----------------------------------------------------------------------
+        //this api for get reviews in services id wise by query method
+        app.get('/review', async (req, res) => {
+            console.log(req.query.service);
+            const id = req.params.id;
+            let query = { service: id };
+            if (req.query.service) {
+                query = {
+                    service: req.query.service
+                }
+            }
+
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        });
+
+        //-----------------------------------------------------------------------
+
+        // this api is for input form data front end to database at the service/:id route
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        });
+
+        // this api for delete reviews 
+        app.delete('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await reviewCollection.deleteOne(query)
+            res.send(result);
+        })
+
+
+
+    }
+    finally {
+
+    }
+}
+run().catch(err => console.error(err));
+
+
+app.get('/', (req, res) => {
+    res.send('ISP review is running')
+})
+
+app.listen(port, () => {
+    console.log(`ISP service server running on ${port}`)
+});
